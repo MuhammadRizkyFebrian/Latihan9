@@ -1,39 +1,49 @@
 const User = require('../models/user.model');
 
-exports.getAll = (req, res) => {
-  User.getAll((err, data) => {
-    if (err) res.status(500).send({ message: err.message });
-    else res.send(data);
-  });
+exports.getAll = async (req, res) => {
+  try {
+    const data = await User.getAll(); // pastikan getAll() return Promise
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-exports.getById = (req, res) => {
-  User.getById(req.params.id, (err, data) => {
-    if (err) res.status(500).send({ message: err.message });
-    else res.send(data);
-  });
+exports.getById = async (req, res) => {
+  try {
+    const data = await User.getById(req.params.id);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-exports.create = (req, res) => {
-  const newUser = req.body;
-  User.create(newUser, (err, data) => {
-    if (err) res.status(500).send({ message: err.message });
-    else res.send(data);
-  });
+exports.create = async (req, res) => {
+  try {
+    const newUser = req.body;
+    const data = await User.create(newUser);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-exports.update = (req, res) => {
-  const id = req.params.id;
-  const newData = req.body;
-  User.update(id, newData, (err, data) => {
-    if (err) res.status(500).send({ message: err.message });
-    else res.send(data);
-  });
+exports.update = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const newData = req.body;
+    const data = await User.update(id, newData);
+    res.send(data);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
-exports.delete = (req, res) => {
-  User.delete(req.params.id, (err, data) => {
-    if (err) res.status(500).send({ message: err.message });
-    else res.send({ message: 'User deleted successfully' });
-  });
+exports.delete = async (req, res) => {
+  try {
+    await User.delete(req.params.id);
+    res.send({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };

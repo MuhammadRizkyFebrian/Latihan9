@@ -1,19 +1,15 @@
-const db = require('./db.config');
+const db = require('./db.config'); // pakai mysql2/promise
 
 const User = {
-  getAll: callback => {
-    db.query('SELECT * FROM users', callback);
-  },
+  getAll: () => db.query('SELECT * FROM users').then(([rows]) => rows),
 
-  getById: (id, callback) => {
-    db.query('SELECT * FROM users WHERE id = ?', [id], callback);
-  },
+  getById: (id) =>
+    db.query('SELECT * FROM users WHERE id = ?', [id]).then(([rows]) => rows[0]),
 
-  create: (data, callback) => {
-    db.query('INSERT INTO users SET ?', data, callback);
-  },
+  create: (data) =>
+    db.query('INSERT INTO users SET ?', data).then(([result]) => result),
 
-  update: (id, data, callback) => {
+  update: (id, data) => {
     const fields = [];
     const values = [];
 
@@ -25,21 +21,17 @@ const User = {
     }
 
     if (fields.length === 0) {
-      return callback(null, { message: 'No fields to update' });
+      return Promise.resolve({ message: 'No fields to update' });
     }
 
     values.push(id);
     const sql = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
 
-    db.query(sql, values, (err, result) => {
-      if (err) return callback(err);
-      callback(null, result);
-    });
+    return db.query(sql, values).then(([result]) => result);
   },
 
-  delete: (id, callback) => {
-    db.query('DELETE FROM users WHERE id = ?', [id], callback);
-  }
+  delete: (id) =>
+    db.query('DELETE FROM users WHERE id = ?', [id]).then(([result]) => result)
 };
 
 module.exports = User;
